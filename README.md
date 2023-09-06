@@ -4,7 +4,7 @@
 
 I finally got tired of re-writing these scripts every time I setup a Minecraft server.
 
-I'm sure there are better ways to do a lot of this, but this is what's working for me at the moment.
+I'm sure there are better ways to do a lot of this, but this is what's working for me at the moment. This is the first step towards full IaC automation by helping me build my VM template.
 
 ## How to setup a new server
 

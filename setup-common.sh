@@ -13,6 +13,7 @@ apt install openjdk-19-jre-headless
 # Setup User + Group
 groupadd -r minecraft
 useradd -r -g minecraft -d "/home/minecraft" -m -s "/bin/bash" minecraft
+# sudo usermod -a -G minecraft dukk
 
 # Create Directories
 mkdir -p /home/minecraft/downloads
@@ -23,6 +24,8 @@ mkdir -p /opt/{minecraft,minecraft-proxy}
 cp -R $TEMPLATE_DIR/etc/systemd/system/* /etc/systemd/system
 cp -R $TEMPLATE_DIR/home/minecraft/* /home/minecraft
 cp -R $TEMPLATE_DIR/opt/*.sh /opt/
+
+chmod +x /home/minecraft/scripts/*.sh
 
 # Execute Scripts
 /opt/fix-all.sh
