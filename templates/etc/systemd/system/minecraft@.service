@@ -30,7 +30,7 @@ ProtectControlGroups=true
 # Implies MountAPIVFS=yes
 
 # Set default memory values
-Environment="MIN_MEM=2G" "MAX_MEM=2G" "SHUTDOWN_DELAY=5s" "POST_SHUTDOWN_DELAY=10s" "SERVER_JAR=server.jar"
+Environment="MIN_MEM=2G" "MAX_MEM=2G" "PRE_SHUTDOWN_DELAY=5s" "POST_SHUTDOWN_DELAY=5s" "SERVER_JAR=server.jar"
 # Change memory values in environment file
 EnvironmentFile=-/opt/minecraft/%i/server/server.conf
 
@@ -44,11 +44,15 @@ ExecStart=/usr/bin/screen -DmS minecraft-%i /usr/bin/java -server -Xms${MIN_MEM}
 #ExecStart=/usr/bin/screen -DmS minecraft-%i /usr/bin/java -Xms${MIN_MEM} -Xmx${MAX_MEM} -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar {SERVER_JAR} nogui
 #ExecStart=/usr/bin/java -server -Xms${MIN_MEM} -Xmx${MAX_MEM} -XX:+UseG1GC -XX:ParallelGCThreads=2 -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -jar ${SERVER_JAR} --nojline nogui
 
+ExecReload=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "helpop REALOADING SERVER CONFIGURATION..."\\015'
 ExecReload=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "reload"\\015'
+ExecReload=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "helpop SERVER CONFIGURATION RELOADED."\\015'
 
-ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "say SERVER SHUTTING DOWN. Saving map..."\\015'
-ExecStop=/bin/sh -c '/bin/sleep ${SHUTDOWN_DELAY}'
+ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "say SERVER SHUTTING DOWN. SAVING MAP..."\\015'
 ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "save-all"\\015'
+ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "say SERVER SHUTTING DOWN IN ${PRE_SHUTDOWN_DELAY}..."\\015'
+ExecStop=/bin/sh -c '/bin/sleep ${PRE_SHUTDOWN_DELAY}'
+ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "kickall"\\015'
 ExecStop=/usr/bin/screen -p 0 -S minecraft-%i -X eval 'stuff "stop"\\015'
 ExecStop=/bin/sh -c '/bin/sleep ${POST_SHUTDOWN_DELAY}'
 
